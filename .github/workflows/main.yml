@@ -1,0 +1,11 @@
+- name: Deploy to Cloudflare Workers with Wrangler
+  uses: cloudflare/wrangler-action@v4.0.0
+- name: Setup cloudflared
+  # You may pin to the exact commit or the version.
+  # uses: AnimMouse/setup-cloudflared@b80ad7aa7850e1ec9960d75831f32ac9855df988
+  uses: AnimMouse/setup-cloudflared@v2
+  with:
+    # cloudflared version
+    version: # optional, default is latest
+    # GitHub token to avoid API rate limiting
+    token: # optional, default is ${{ github.token }}
