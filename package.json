@@ -1,0 +1,18 @@
+{
+  "name": "binos-properties",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tailwindcss -i styles.css -o output.css --watch",
+    "build": "tailwindcss -i styles.css -o output.css --minify && mkdir -p dist/public/lib dist/public/routes dist/public/public && cp index.html app.js output.css manifest.json sw.js dist/public/ && cp lib/*.js dist/public/lib/ && cp routes/*.js dist/public/routes/ && cp public/* dist/public/public/ 2>/dev/null; true",
+    "deploy": "npm run build && wrangler deploy",
+    "db:init": "wrangler d1 execute pomp --remote --file=migrations/001_schema.sql",
+    "db:portals": "wrangler d1 execute pomp_portals --remote --file=migrations/001_portals.sql",
+    "genkey": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "wrangler": "^3.0.0"
+  }
+}
