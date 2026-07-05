@@ -1,4 +1,4 @@
-const CACHE = 'pomp-v1';
+const CACHE = 'pomp-v3';
 
 const PRECACHE = [
   '/',
@@ -23,8 +23,6 @@ const PRECACHE = [
   '/routes/settings.js',
   '/public/favicon.ico',
   '/manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
 ];
 
 self.addEventListener('install', (e) => {
@@ -35,14 +33,23 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+    Promise.all([
+      caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))),
+      self.clients.claim(),
+    ])
   );
 });
 
 self.addEventListener('fetch', (e) => {
   const { request } = e;
   if (request.method !== 'GET') return;
-  if (request.url.includes('/api/')) {
+
+  const url = new URL(request.url);
+  if (url.origin !== location.origin) return;
+
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    e.respondWith(networkFirst(request));
+  } else if (url.pathname.startsWith('/api/')) {
     e.respondWith(networkFirst(request));
   } else {
     e.respondWith(cacheFirst(request));
