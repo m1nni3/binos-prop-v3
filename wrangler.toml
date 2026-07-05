@@ -1,4 +1,4 @@
-name = "binos-properties"
+name = "binos-v2"
 main = "functions/_worker.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -10,8 +10,8 @@ run_worker_first = true
 
 [[d1_databases]]
 binding = "DB"
-database_name = "pomp"
-database_id = "YOUR_DATABASE_ID"
+database_name = "binos"
+database_id = "26851040-21fd-4b65-b0fe-bfbf2dea77f7"
 
 [[d1_databases]]
 binding = "PORTALS_DB"
