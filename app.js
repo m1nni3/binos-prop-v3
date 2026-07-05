@@ -208,12 +208,11 @@ function renderContent() {
   });
 }
 
-initCache().then(() => {
-  applyBranding();
-  renderLayout();
-  renderContent();
-  window.addEventListener('pomp-settings-changed', (e) => updateSidebarLogo(e.detail));
-});
+applyBranding();
+renderLayout();
+renderContent();
+initCache();
+window.addEventListener('pomp-settings-changed', (e) => updateSidebarLogo(e.detail));
 
 window.addEventListener('unhandledrejection', (e) => {
   toast.error('An unexpected error occurred');
