@@ -1,4 +1,4 @@
-name = "binos-v3"
+name = "binos-prop-v3"
 main = "functions/_worker.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
