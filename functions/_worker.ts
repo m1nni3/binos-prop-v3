@@ -21,13 +21,31 @@ const CORS = {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
+    try {
+      const url = new URL(request.url);
 
-    if (url.pathname.startsWith('/api/')) {
-      return handleApi(request, env, url);
+      // quick health check endpoint to verify worker is up
+      if (url.pathname === '/health') {
+        return new Response('OK', { status: 200, headers: { ...CORS, 'Content-Type': 'text/plain' } });
+      }
+
+      if (url.pathname.startsWith('/api/')) {
+        return await handleApi(request, env, url);
+      }
+
+      // Serve static assets; wrap with try/catch to avoid blank responses
+      try {
+        return await env.ASSETS.fetch(request);
+      } catch (err) {
+        console.error('Error serving assets:', err);
+        const html = `<!doctype html><html><head><meta charset="utf-8"><title>Server error</title></head><body><h1>Server error</h1><p>Unable to load assets. Check worker logs.</p><pre>${String(err)}</pre></body></html>`;
+        return new Response(html, { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      }
+    } catch (e) {
+      console.error('Unhandled error in fetch handler:', e);
+      const errMessage = (e as Error)?.message || String(e);
+      return new Response(`<!doctype html><html><head><meta charset="utf-8"><title>Server error</title></head><body><h1>Server error</h1><pre>${errMessage}</pre></body></html>`, { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
-
-    return env.ASSETS.fetch(request);
   },
 };
 
@@ -72,6 +90,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
         return json({ error: 'Not found' }, 404);
     }
   } catch (e) {
+    console.error('API handler error:', e);
     return json({ error: (e as Error).message }, 500);
   }
 }
@@ -413,7 +432,7 @@ async function handlePLEntries(request: Request, env: Env, id: number | null) {
     }
     case 'POST': {
       const body = await getBody(request);
-      const result = await env.DB.prepare('INSERT INTO pl_entries (date, category, description, amount, property_id, deducted_expenses) VALUES (?, ?, ?, ?, ?, ?)').bind(body.date, body.category, body.description, body.amount, body.property_id, body.deducted_expenses ? 1 : 0).run();
+      const result = await env.DB.prepare('INSERT INTO pl_entries (date, category, description, amount, property_id, deducted_expenses) VALUES (?, ?, ?, ?, ?, ?)').bind(body.date, body.category, body.description || '', body.amount, body.property_id || '', body.deducted_expenses ? 1 : 0).run();
       return json({ id: result.meta.last_row_id, ...body }, 201);
     }
     case 'PUT': {
@@ -555,7 +574,7 @@ async function handlePettyCash(request: Request, env: Env, subType: string, id: 
       const body = await getBody(request);
       const type = subType === 'income' ? 'income' : subType === 'expenses' ? 'expense' : null;
       if (!type) return json({ error: 'Bad request' }, 400);
-      const result = await env.DB.prepare('INSERT INTO petty_cash (type, amount, description, property_id, date, category) VALUES (?, ?, ?, ?, ?, ?)').bind(type, body.amount, body.description, body.property_id, body.date, body.category || '').run();
+      const result = await env.DB.prepare('INSERT INTO petty_cash (type, amount, description, property_id, date, category) VALUES (?, ?, ?, ?, ?, ?)').bind(type, body.amount, body.description, body.property_id || '', body.date || null, body.category || '').run();
       return json({ id: result.meta.last_row_id, ...body }, 201);
     }
     case 'DELETE': {
