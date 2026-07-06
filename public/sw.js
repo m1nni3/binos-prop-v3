@@ -21,7 +21,7 @@ const PRECACHE = [
   '/routes/activity.js',
   '/routes/tenants.js',
   '/routes/settings.js',
-  '/public/favicon.ico',
+  '/favicon.ico',
   '/manifest.json',
 ];
 
