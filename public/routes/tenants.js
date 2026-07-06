@@ -2,6 +2,7 @@ import { apiClient, formatDate, escHtml } from '../lib/utils.js';
 import { ICONS } from '../lib/icons.js';
 import { openImageViewer } from '../lib/image-viewer.js';
 import { toast } from '../lib/toast.js';
+import { fetchWithTimeout } from '../lib/fetch-with-timeout.js';
 
 export function renderTenants(container) {
   let state = {
@@ -74,20 +75,20 @@ export function renderTenants(container) {
       '<div class="flex items-start justify-between mb-3">' +
       '<div class="flex items-center gap-3">' +
       '<div class="w-10 h-10 rounded-full bg-binos-green/10 flex items-center justify-center">' +
-      '<svg class="w-5 h-5 text-binos-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>' +
+      '<svg class="w-5 h-5 text-binos-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.3-1.97M9 20H4v-2a3 3 0 015.3-1.97M15 11a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>' +
       '</div><div><h3 class="font-medium leading-tight">' + escHtml(t.name) + '</h3>' +
       '<div class="text-xs text-binos-gray">' + propName(t.property_id) + '</div></div></div>' +
       '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ' + (active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') + '">' + (active ? 'Active' : 'Expired') + '</span>' +
       '</div>' +
       '<div class="space-y-1.5 text-sm">' +
-      (t.phone ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><a href="tel:' + escHtml(t.phone) + '" class="hover:text-binos-blue">' + escHtml(t.phone) + '</a></div>' : '') +
-      (t.email ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><a href="mailto:' + escHtml(t.email) + '" class="hover:text-binos-blue truncate">' + escHtml(t.email) + '</a></div>' : '') +
-      (t.lease_start || t.lease_end ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>' + formatDate(t.lease_start) + ' — ' + formatDate(t.lease_end) + '</span></div>' : '') +
+      (t.phone ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l.56 1.8a1 1 0 01-.25.97L8.91 9.09a11.04 11.04 0 005 5l1.64-1.64a1 1 0 01.97-.25l1.8.56a1 1 0 01.68.95V19a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>' + escHtml(t.phone) + '</div>' : '') +
+      (t.email ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"></path></svg>' + escHtml(t.email) + '</div>' : '') +
+      (t.lease_start || t.lease_end ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7H3v12a2 2 0 002 2z"></path></svg>' + (t.lease_start ? t.lease_start : '') + ' – ' + (t.lease_end ? t.lease_end : '') + '</div>' : '') +
       '</div>' +
       '<div class="mt-3 flex items-center gap-3 border-t border-binos-border/50 pt-3">' +
-      (t.lease_file ? '<a href="' + escHtml(t.lease_file) + '" target="_blank" class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Lease</a>' : '') +
-      '<button class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue" data-inspect-modal=\'' + JSON.stringify({ id: t.id, type: 'reports' }) + '\'><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' + inpCount + '</button>' +
-      '<button class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue" data-inspect-modal=\'' + JSON.stringify({ id: t.id, type: 'images' }) + '\'><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>' + imgCount + '</button>' +
+      (t.lease_file ? '<a href="' + escHtml(t.lease_file) + '" target="_blank" class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Lease</a>' : '') +
+      '<button class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue" data-inspect-modal=\'' + JSON.stringify({ id: t.id, type: 'reports' }) + '\'><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8h6"></path></svg> ' + inpCount + '</button>' +
+      '<button class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue" data-inspect-modal=\'' + JSON.stringify({ id: t.id, type: 'images' }) + '\'><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h4l3 5 4-8 3 6h4"></path></svg> ' + imgCount + '</button>' +
       '</div>' +
       '<div class="mt-3 flex gap-2"><button class="btn-secondary btn-sm py-1.5 px-3" data-edit-tenant="' + t.id + '">Edit</button>' +
       '<button class="btn-danger btn-sm py-1.5 px-3" data-delete-tenant="' + t.id + '">Delete</button></div></div>';
@@ -104,7 +105,7 @@ export function renderTenants(container) {
     let html = '<div class="modal-overlay" data-close-inspect>' +
       '<div class="modal-content max-w-lg" onclick="event.stopPropagation()">' +
       '<div class="card-header flex items-center justify-between"><h3 class="font-display font-semibold">' + escHtml(tenant.name) + ' — Inspection ' + label + '</h3>' +
-      '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-inspect><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' +
+      '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-inspect><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>' +
       '<div class="card-body max-h-[70vh] overflow-y-auto">';
 
     if (items.length === 0) {
@@ -113,16 +114,16 @@ export function renderTenants(container) {
       html += '<div class="grid grid-cols-2 gap-3">' + items.map(item =>
         '<div class="relative"><img src="' + escHtml(item.url) + '" class="w-full h-32 object-cover rounded-lg border cursor-pointer" data-tenant-img=\'' + JSON.stringify({ id: tenant.id, url: item.url }) + '\'>' +
         (item.date ? '<div class="text-xs text-binos-gray mt-1">' + formatDate(item.date) + '</div>' : '') +
-        '<button class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs" data-del-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type, url: item.url }) + '\'>x</button></div>'
+        '<button class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full text-xs" data-del-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type, url: item.url }) + '\'>×</button></div>'
       ).join('') + '</div>';
     } else {
       html += '<div class="space-y-2">' + items.map(item =>
         '<div class="card p-3 flex items-center justify-between">' +
-        '<div class="flex items-center gap-3 min-w-0"><svg class="w-5 h-5 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' +
+        '<div class="flex items-center gap-3 min-w-0"><svg class="w-5 h-5 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"></path></svg>' +
         '<span class="text-sm truncate">' + (item.name || item.url.split('/').pop() || 'file') + '</span></div>' +
         '<div class="flex gap-1">' +
-        '<a href="' + escHtml(item.url) + '" target="_blank" class="p-1.5 rounded-lg hover:bg-binos-light"><svg class="w-4 h-4 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></a>' +
-        '<button class="p-1.5 rounded-lg hover:bg-red-50" data-del-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type, url: item.url }) + '\'><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>' +
+        '<a href="' + escHtml(item.url) + '" target="_blank" class="p-1.5 rounded-lg hover:bg-binos-light"><svg class="w-4 h-4 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>' +
+        '<button class="p-1.5 rounded-lg hover:bg-red-50" data-del-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type, url: item.url }) + '\'><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>' +
         '</div></div>'
       ).join('') + '</div>';
     }
@@ -130,9 +131,10 @@ export function renderTenants(container) {
     html += '<div class="mt-4 pt-4 border-t border-binos-border">' +
       '<div class="grid grid-cols-2 gap-3 mb-3">' +
       '<div><label class="block text-xs text-binos-gray mb-1">Date</label><input type="date" class="input-field text-sm" data-inspect-date value="' + state.inspectForm.date + '"></div>' +
-      '<div><label class="block text-xs text-binos-gray mb-1">Notes</label><input type="text" class="input-field text-sm" data-inspect-notes value="' + escHtml(state.inspectForm.notes) + '"></div></div>' +
-      '<label class="btn-primary btn-sm cursor-pointer inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Upload ' + label.slice(0, -1) +
-      '<input type="file" accept="' + (isImage ? 'image/*' : '.pdf,.doc,.docx') + '" class="hidden" data-upload-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type }) + '\'></label></div>' +
+      '<div><label class="block text-xs text-binos-gray mb-1">Notes</label><input type="text" class="input-field text-sm" data-inspect-notes value="' + escHtml(state.inspectForm.notes) + '"></div>' +
+      '</div>' +
+      '<label class="btn-primary btn-sm cursor-pointer inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>' +
+      '<input type="file" accept="' + (isImage ? 'image/*' : '.pdf,.doc,.docx') + '" class="hidden" data-upload-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type }) + '\'></label>' +
       '</div></div></div>';
     return html;
   }
@@ -185,9 +187,13 @@ export function renderTenants(container) {
       fd.append('type', type);
       fd.append('date', state.inspectForm.date || new Date().toISOString().split('T')[0]);
       fd.append('notes', state.inspectForm.notes || '');
-      await fetch('/api/tenants/' + id + '/inspection', { method: 'POST', body: fd });
+      const res = await fetchWithTimeout('/api/tenants/' + id + '/inspection', { method: 'POST', body: fd }, 20000);
+      if (!res.ok) throw new Error('Upload failed');
       await loadData();
-    } catch (e) { toast.error('Upload failed'); }
+    } catch (e) {
+      console.error('uploadInspect error', e);
+      toast.error('Upload failed');
+    }
   }
 
   async function deleteInspect(id, type, url) {
@@ -232,20 +238,20 @@ export function renderTenants(container) {
     if (!state.showForm) return '';
     return '<div class="modal-overlay" data-close-form><div class="modal-content max-w-lg" onclick="event.stopPropagation()">' +
       '<div class="card-header flex items-center justify-between"><h3 class="font-display font-semibold">' + (state.editingId ? 'Edit Tenant' : 'Add Tenant') + '</h3>' +
-      '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-form><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' +
+      '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-form><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>' +
       '<div class="card-body"><div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
-      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Name *</label><input type="text" class="input-field" value="' + escHtml(state.form.name) + '" onchange="(e => { state.form.name = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Phone</label><input type="tel" class="input-field" value="' + escHtml(state.form.phone) + '" onchange="(e => { state.form.phone = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Email</label><input type="email" class="input-field" value="' + escHtml(state.form.email) + '" onchange="(e => { state.form.email = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease Start</label><input type="date" class="input-field" value="' + state.form.lease_start + '" onchange="(e => { state.form.lease_start = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease End</label><input type="date" class="input-field" value="' + state.form.lease_end + '" onchange="(e => { state.form.lease_end = e.target.value; rerender(); })(event)"></div>' +
+      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Name *</label><input type="text" class="input-field" value="' + escHtml(state.form.name) + '" onchange="(e => { state.form.name = e.target.value; })(event)"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Phone</label><input type="tel" class="input-field" value="' + escHtml(state.form.phone) + '" onchange="(e => { state.form.phone = e.target.value; })(event)"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Email</label><input type="email" class="input-field" value="' + escHtml(state.form.email) + '" onchange="(e => { state.form.email = e.target.value; })(event)"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease Start</label><input type="date" class="input-field" value="' + state.form.lease_start + '" onchange="(e => { state.form.lease_start = e.target.value; })(event)"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease End</label><input type="date" class="input-field" value="' + state.form.lease_end + '" onchange="(e => { state.form.lease_end = e.target.value; })(event)"></div>' +
       '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Property</label>' +
       '<select class="select-field" onchange="(e => { state.form.property_id = e.target.value || null; rerender(); })(event)">' +
       '<option value="">Select property</option>' +
       state.properties.map(p => '<option value="' + p.id + '" ' + (state.form.property_id == p.id ? 'selected' : '') + '>' + escHtml(p.scheme_name) + '</option>').join('') + '</select></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease File URL</label><input type="url" class="input-field" placeholder="Link to lease doc in property-files" value="' + escHtml(state.form.lease_file) + '" onchange="(e => { state.form.lease_file = e.target.value; rerender(); })(event)"></div>' +
-      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Notes</label><textarea class="input-field min-h-[80px]" onchange="(e => { state.form.notes = e.target.value; rerender(); })(event)">' + escHtml(state.form.notes) + '</textarea></div>' +
-      '</div><div class="flex gap-3 pt-6"><button class="btn-secondary flex-1" data-close-form>Cancel</button>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease File URL</label><input type="url" class="input-field" placeholder="Link to lease doc in property-files" value="' + (state.form.lease_file || '') + '" onchange="(e => { state.form.lease_file = e.target.value; })(event)"></div>' +
+      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Notes</label><textarea class="input-field min-h-[80px]" onchange="(e => { state.form.notes = e.target.value; })(event)">' + escHtml(state.form.notes) + '</textarea></div>' +
+      '<div class="flex gap-3 pt-6"><button class="btn-secondary flex-1" data-close-form>Cancel</button>' +
       '<button class="btn-primary flex-1" data-save-tenant ' + (!state.form.name ? 'disabled' : '') + '>Save</button></div></div></div></div>';
   }
 
