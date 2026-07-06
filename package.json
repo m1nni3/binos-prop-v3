@@ -4,26 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "dev": "npx tailwindcss -i ./src/input.css -o ./public/output.css --watch",
+    "build": "npx tailwindcss -i ./src/input.css -o ./public/output.css --minify",
     "deploy": "npm run build && wrangler deploy",
     "db:init": "wrangler d1 execute pomp --remote --file=migrations/001_schema.sql",
     "db:portals": "wrangler d1 execute pomp_portals --remote --file=migrations/001_portals.sql",
     "genkey": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.0",
-    "@sveltejs/kit": "^2.20.0",
-    "@sveltejs/vite-plugin-svelte": "^5.0.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.5.0",
-    "svelte": "^5.25.0",
-    "svelte-check": "^4.0.0",
     "tailwindcss": "^3.4.0",
-    "typescript": "^5.7.0",
-    "vite": "^6.3.0",
-    "wrangler": "^4.107.0"
+    "wrangler": "^4.104.0"
   }
 }
