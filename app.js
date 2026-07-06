@@ -78,102 +78,109 @@ function toggleSidebar() {
 }
 
 function renderLayout() {
-  const settings = JSON.parse(localStorage.getItem('POMP_SETTINGS') || '{}');
+  try {
+    const settings = JSON.parse(localStorage.getItem('POMP_SETTINGS') || '{}');
 
-  const navHtml = NAV_SECTIONS.map(section => `
-    <div class="mb-6">
-      <div class="px-3 mb-2 text-xs font-semibold text-binos-gray uppercase tracking-wider">${section.label}</div>
-      ${section.items.map(item => `
-        <a href="${item.path}" data-nav="${item.path}" class="sidebar-link ${currentRoute === item.path ? 'active' : ''} mb-1">
-          <span class="sidebar-icon-${item.color}">${ICONS[item.icon]}</span>
-          <span>${item.name}</span>
-        </a>
-      `).join('')}
-    </div>
-  `).join('');
-
-  document.getElementById('app').innerHTML = `
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="document.getElementById('sidebar-toggle').click()"></div>
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-binos-sidebar-gradient-from to-binos-sidebar-gradient-to transform -translate-x-full transition-transform duration-300 lg:translate-x-0 flex flex-col">
-      <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10 sidebar-logo-area">
-        ${settings.logo
-          ? `<img src="${settings.logo}" class="h-9 w-auto max-w-[160px] object-contain">`
-          : `<div class="w-9 h-9 rounded-lg bg-gradient-to-br from-binos-blue to-binos-purple flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-            </div>
-            <div>
-              <div class="text-white font-display font-bold text-lg leading-tight">Binos</div>
-              <div class="text-binos-gray text-xs">Property Management</div>
-            </div>`
-        }
+    const navHtml = NAV_SECTIONS.map(section => `
+      <div class="mb-6">
+        <div class="px-3 mb-2 text-xs font-semibold text-binos-gray uppercase tracking-wider">${section.label}</div>
+        ${section.items.map(item => `
+          <a href="${item.path}" data-nav="${Math.random() < 0 ? '' : item.path}" class="sidebar-link ${currentRoute === item.path ? 'active' : ''} mb-1">
+            <span class="sidebar-icon-${item.color}">${ICONS[item.icon]}</span>
+            <span>${item.name}</span>
+          </a>
+        `).join('')}
       </div>
-      <nav class="flex-1 overflow-y-auto px-3 py-4">
-        ${navHtml}
-        <div class="mt-auto border-t border-white/10 pt-4 space-y-1">
-          <a href="/portals" data-nav="/portals" class="sidebar-link ${currentRoute === '/portals' ? 'active' : ''} mb-1">
-            <span class="sidebar-icon-cyan">${ICONS.globe}</span>
-            <span>Portals</span>
-          </a>
-          <a href="/settings" data-nav="/settings" class="sidebar-link ${currentRoute === '/settings' ? 'active' : ''} mb-1">
-            <span class="sidebar-icon-gray">${ICONS.settings}</span>
-            <span>Settings</span>
-          </a>
-        </div>
-      </nav>
-    </aside>
-    <div class="lg:ml-64 min-h-screen">
-      <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-binos-border">
-        <div class="flex items-center justify-between px-4 lg:px-6 py-3">
-          <div class="flex items-center gap-3">
-            <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-binos-light" onclick="document.getElementById('sidebar-toggle').dispatchEvent(new CustomEvent('toggle-sidebar'))">
-              ${ICONS.menu}
-            </button>
-            <div class="relative hidden sm:block">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-binos-gray">${ICONS.search}</span>
-              <input id="global-search" type="text" placeholder="Search properties, contacts..." class="pl-10 pr-4 py-2 bg-binos-light border-0 rounded-lg text-sm w-64 focus:ring-2 focus:ring-binos-blue/30 focus:outline-none">
-            </div>
-          </div>
-          <div class="flex items-center gap-4">
-            <button class="relative p-2 rounded-lg hover:bg-binos-light">
-              ${ICONS.bell}
-              <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-binos-red text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
-            </button>
-            <div class="flex items-center gap-2 pl-4 border-l border-binos-border">
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-binos-blue to-binos-purple flex items-center justify-center">
-                <span class="text-white text-sm font-medium">MP</span>
+    `).join('');
+
+    document.getElementById('app').innerHTML = `
+      <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" data-overlay></div>
+      <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-binos-sidebar-gradient-from to-binos-sidebar-gradient-to transform -translate-x-full transition-transform duration-300 lg:translate-x-0 flex flex-col">
+        <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10 sidebar-logo-area">
+          ${settings.logo
+            ? `<img src="${settings.logo}" class="h-9 w-auto max-w-[160px] object-contain">`
+            : `<div class="w-9 h-9 rounded-lg bg-gradient-to-br from-binos-blue to-binos-purple flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
               </div>
-              <span class="hidden sm:inline text-sm font-medium">MP</span>
+              <div>
+                <div class="text-white font-display font-bold text-lg leading-tight">Binos</div>
+                <div class="text-binos-gray text-xs">Property Management</div>
+              </div>`
+          }
+        </div>
+        <nav class="flex-1 overflow-y-auto px-3 py-4">
+          ${navHtml}
+          <div class="mt-auto border-t border-white/10 pt-4 space-y-1">
+            <a href="/portals" data-nav="/portals" class="sidebar-link ${currentRoute === '/portals' ? 'active' : ''} mb-1">
+              <span class="sidebar-icon-cyan">${ICONS.globe}</span>
+              <span>Portals</span>
+            </a>
+            <a href="/settings" data-nav="/settings" class="sidebar-link ${currentRoute === '/settings' ? 'active' : ''} mb-1">
+              <span class="sidebar-icon-gray">${ICONS.settings}</span>
+              <span>Settings</span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+      <div class="lg:ml-64 min-h-screen">
+        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-binos-border">
+          <div class="flex items-center justify-between px-4 lg:px-6 py-3">
+            <div class="flex items-center gap-3">
+              <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-binos-light" data-toggle-sidebar>
+                ${ICONS.menu}
+              </button>
+              <div class="relative hidden sm:block">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-binos-gray">${ICONS.search}</span>
+                <input id="global-search" type="text" placeholder="Search properties, contacts..." class="pl-10 pr-4 py-2 bg-binos-light border-0 rounded-lg text-sm w-64 focus:ring-2 focus:ring-binos-blue/30 focus:outline-none">
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <button class="relative p-2 rounded-lg hover:bg-binos-light">
+                ${ICONS.bell}
+                <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-binos-red text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+              </button>
+              <div class="flex items-center gap-2 pl-4 border-l border-binos-border">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-binos-blue to-binos-purple flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">MP</span>
+                </div>
+                <span class="hidden sm:inline text-sm font-medium">MP</span>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
-      <main id="page-content" class="p-4 lg:p-6"></main>
-    </div>
-  `;
+        </header>
+        <main id="page-content" class="p-4 lg:p-6"></main>
+      </div>
+    `;
 
-  document.getElementById('sidebar-toggle').addEventListener('toggle-sidebar', toggleSidebar);
+    document.getElementById('sidebar-toggle')?.addEventListener('toggle-sidebar', toggleSidebar);
+    document.querySelector('[data-overlay]')?.addEventListener('click', () => document.getElementById('sidebar-toggle')?.click());
+    document.querySelector('[data-toggle-sidebar]')?.addEventListener('click', toggleSidebar);
 
-  const searchInput = document.getElementById('global-search');
-  if (searchInput) {
-    searchInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && e.target.value.trim()) {
-        sessionStorage.setItem('globalSearch', e.target.value.trim());
-        navigate('/properties');
-      }
+    const searchInput = document.getElementById('global-search');
+    if (searchInput) {
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+          sessionStorage.setItem('globalSearch', e.target.value.trim());
+          navigate('/properties');
+        }
+      });
+    }
+
+    document.querySelectorAll('[data-nav]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        navigate(link.dataset.nav);
+      });
     });
+
+    window.addEventListener('popstate', () => {
+      currentRoute = location.pathname;
+      renderContent();
+    });
+  } catch (err) {
+    toast.error('Failed to render layout: ' + (err.message || 'Unknown error'));
+    document.getElementById('app').innerHTML = '<div class="p-8 text-center text-red-600">Application error. Please refresh.</div>';
   }
-
-  document.querySelectorAll('[data-nav]').forEach(link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-      navigate(link.dataset.nav);
-    });
-  });
-
-  window.addEventListener('popstate', () => {
-    currentRoute = location.pathname;
-    renderContent();
-  });
 }
 
 function updateSidebarLogo(settings) {

@@ -1,4 +1,5 @@
-import { escHtml } from '../lib/utils.js';
+import { apiClient, escHtml } from '../lib/utils.js';
+import { toast } from '../lib/toast.js';
 
 export function renderPortals(container) {
   let loading = true;
@@ -15,13 +16,12 @@ export function renderPortals(container) {
     error = null;
     render();
     try {
-      const res = await fetch('/api/portals');
-      if (!res.ok) throw new Error('Failed to load portals');
-      portals = await res.json();
+      const data = await apiClient.get('/portals');
+      portals = Array.isArray(data) ? data : [];
       loading = false;
       render();
     } catch (e) {
-      error = e.message;
+      error = e.message || 'Failed to load portals';
       loading = false;
       render();
     }
@@ -60,21 +60,10 @@ export function renderPortals(container) {
     try {
       const body = editForm;
       if (editingId) {
-        const res = await fetch('/api/portals/' + editingId, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) throw new Error('Failed to update portal');
+        await apiClient.put('/portals/' + editingId, body);
         portals = portals.map(p => p.id === editingId ? { ...p, ...editForm } : p);
       } else {
-        const res = await fetch('/api/portals', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        if (!res.ok) throw new Error('Failed to create portal');
-        const portal = await res.json();
+        const portal = await apiClient.post('/portals', body);
         portals.push(portal);
       }
       editingId = null;
@@ -82,7 +71,7 @@ export function renderPortals(container) {
       editForm = { type: '', name: '', username: '', password: '', url: '' };
       await load();
     } catch (e) {
-      error = e.message;
+      error = e.message || 'Failed to save portal';
       render();
     }
   }
@@ -173,30 +162,40 @@ export function renderPortals(container) {
         if (p) startEdit(p);
       };
     });
-    container.querySelector('[data-save-edit]')?.addEventListener('click', () => {
-      editForm.type = container.querySelector('[data-edit-type]').value;
-      editForm.name = container.querySelector('[data-edit-name]').value;
-      editForm.username = container.querySelector('[data-edit-user]').value;
-      editForm.password = container.querySelector('[data-edit-pass]').value;
-      editForm.url = container.querySelector('[data-edit-url]').value;
-      saveEdit();
+    container.querySelectorAll('[data-save-edit]').forEach(btn => {
+      btn.onclick = () => {
+        editForm.type = container.querySelector('[data-edit-type]')?.value || '';
+        editForm.name = container.querySelector('[data-edit-name]')?.value || '';
+        editForm.username = container.querySelector('[data-edit-user]')?.value || '';
+        editForm.password = container.querySelector('[data-edit-pass]')?.value || '';
+        editForm.url = container.querySelector('[data-edit-url]')?.value || '';
+        saveEdit();
+      };
     });
-    container.querySelector('[data-cancel-edit]')?.addEventListener('click', cancelEdit);
-    container.querySelector('[data-add-portal]')?.addEventListener('click', () => {
-      editingId = null;
-      showAdd = true;
-      editForm = { type: '', name: '', username: '', password: '', url: '' };
-      render();
+    container.querySelectorAll('[data-cancel-edit]').forEach(btn => {
+      btn.onclick = cancelEdit;
     });
-    container.querySelector('[data-save-add]')?.addEventListener('click', () => {
-      editForm.type = container.querySelector('[data-add-type]').value;
-      editForm.name = container.querySelector('[data-add-name]').value;
-      editForm.username = container.querySelector('[data-add-user]').value;
-      editForm.password = container.querySelector('[data-add-pass]').value;
-      editForm.url = container.querySelector('[data-add-url]').value;
-      saveEdit();
+    container.querySelectorAll('[data-add-portal]').forEach(btn => {
+      btn.onclick = () => {
+        editingId = null;
+        showAdd = true;
+        editForm = { type: '', name: '', username: '', password: '', url: '' };
+        render();
+      };
     });
-    container.querySelector('[data-cancel-add]')?.addEventListener('click', cancelEdit);
+    container.querySelectorAll('[data-save-add]').forEach(btn => {
+      btn.onclick = () => {
+        editForm.type = container.querySelector('[data-add-type]')?.value || '';
+        editForm.name = container.querySelector('[data-add-name]')?.value || '';
+        editForm.username = container.querySelector('[data-add-user]')?.value || '';
+        editForm.password = container.querySelector('[data-add-pass]')?.value || '';
+        editForm.url = container.querySelector('[data-add-url]')?.value || '';
+        saveEdit();
+      };
+    });
+    container.querySelectorAll('[data-cancel-add]').forEach(btn => {
+      btn.onclick = cancelEdit;
+    });
   }
 
   load();

@@ -1,0 +1,39 @@
+{
+	"/": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/activity": [
+		"src/routes/+layout.ts"
+	],
+	"/contacts": [
+		"src/routes/+layout.ts"
+	],
+	"/debrief": [
+		"src/routes/+layout.ts"
+	],
+	"/finances": [
+		"src/routes/+layout.ts"
+	],
+	"/maintenance": [
+		"src/routes/+layout.ts"
+	],
+	"/petty-cash": [
+		"src/routes/+layout.ts"
+	],
+	"/portals": [
+		"src/routes/+layout.ts"
+	],
+	"/properties": [
+		"src/routes/+layout.ts"
+	],
+	"/settings": [
+		"src/routes/+layout.ts"
+	],
+	"/tasks": [
+		"src/routes/+layout.ts"
+	],
+	"/tenants": [
+		"src/routes/+layout.ts"
+	]
+}

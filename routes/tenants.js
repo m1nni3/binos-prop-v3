@@ -82,7 +82,7 @@ export function renderTenants(container) {
       '<div class="space-y-1.5 text-sm">' +
       (t.phone ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg><a href="tel:' + escHtml(t.phone) + '" class="hover:text-binos-blue">' + escHtml(t.phone) + '</a></div>' : '') +
       (t.email ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><a href="mailto:' + escHtml(t.email) + '" class="hover:text-binos-blue truncate">' + escHtml(t.email) + '</a></div>' : '') +
-      (t.lease_start || t.lease_end ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>' + formatDate(t.lease_start) + ' — ' + formatDate(t.lease_end) + '</span></div>' : '') +
+      (t.lease_start || t.lease_end ? '<div class="flex items-center gap-2 text-binos-gray"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg><span>' + formatDate(t.lease_start) + ' - ' + formatDate(t.lease_end) + '</span></div>' : '') +
       '</div>' +
       '<div class="mt-3 flex items-center gap-3 border-t border-binos-border/50 pt-3">' +
       (t.lease_file ? '<a href="' + escHtml(t.lease_file) + '" target="_blank" class="inline-flex items-center gap-1 text-xs text-binos-gray hover:text-binos-blue"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Lease</a>' : '') +
@@ -102,8 +102,8 @@ export function renderTenants(container) {
     const label = isImage ? 'Images' : 'Reports';
 
     let html = '<div class="modal-overlay" data-close-inspect>' +
-      '<div class="modal-content max-w-lg" onclick="event.stopPropagation()">' +
-      '<div class="card-header flex items-center justify-between"><h3 class="font-display font-semibold">' + escHtml(tenant.name) + ' — Inspection ' + label + '</h3>' +
+      '<div class="modal-content max-w-lg" data-stop-propagation>' +
+      '<div class="card-header flex items-center justify-between"><h3 class="font-display font-semibold">' + escHtml(tenant.name) + ' - Inspection ' + label + '</h3>' +
       '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-inspect><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' +
       '<div class="card-body max-h-[70vh] overflow-y-auto">';
 
@@ -121,7 +121,7 @@ export function renderTenants(container) {
         '<div class="flex items-center gap-3 min-w-0"><svg class="w-5 h-5 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>' +
         '<span class="text-sm truncate">' + (item.name || item.url.split('/').pop() || 'file') + '</span></div>' +
         '<div class="flex gap-1">' +
-        '<a href="' + escHtml(item.url) + '" target="_blank" class="p-1.5 rounded-lg hover:bg-binos-light"><svg class="w-4 h-4 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></a>' +
+        '<a href="' + escHtml(item.url) + '" target="_blank" class="p-1.5 rounded-lg hover:bg-binos-light"><svg class="w-4 h-4 text-binos-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></a>' +
         '<button class="p-1.5 rounded-lg hover:bg-red-50" data-del-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type, url: item.url }) + '\'><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>' +
         '</div></div>'
       ).join('') + '</div>';
@@ -131,7 +131,7 @@ export function renderTenants(container) {
       '<div class="grid grid-cols-2 gap-3 mb-3">' +
       '<div><label class="block text-xs text-binos-gray mb-1">Date</label><input type="date" class="input-field text-sm" data-inspect-date value="' + state.inspectForm.date + '"></div>' +
       '<div><label class="block text-xs text-binos-gray mb-1">Notes</label><input type="text" class="input-field text-sm" data-inspect-notes value="' + escHtml(state.inspectForm.notes) + '"></div></div>' +
-      '<label class="btn-primary btn-sm cursor-pointer inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Upload ' + label.slice(0, -1) +
+      '<label class="btn-primary btn-sm cursor-pointer inline-flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 "><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Upload ' + label.slice(0, -1) +
       '<input type="file" accept="' + (isImage ? 'image/*' : '.pdf,.doc,.docx') + '" class="hidden" data-upload-inspect=\'' + JSON.stringify({ id: tenant.id, type: state.inspectModal.type }) + '\'></label></div>' +
       '</div></div></div>';
     return html;
@@ -209,7 +209,7 @@ export function renderTenants(container) {
       html += '<div class="px-5 py-4 border-b border-binos-border bg-white">' +
         '<div class="flex flex-wrap items-center justify-between gap-4">' +
         '<div class="flex flex-wrap items-center gap-3">' +
-        '<select class="select-field py-2 pr-8 text-sm" onchange="(e => { state.filterProp = e.target.value; state.page = 1; rerender(); })(event)">' +
+        '<select class="select-field py-2 pr-8 text-sm" data-filter-prop>' +
         '<option value="all">All Properties</option>' +
         props.map(p => '<option value="' + p.id + '" ' + (state.filterProp == p.id ? 'selected' : '') + '>' + escHtml(p.scheme_name) + '</option>').join('') + '</select></div>' +
         '<button class="btn-primary btn-sm" data-add-tenant><span class="mr-1">' + ICONS.plus + '</span> Add Tenant</button></div></div>' +
@@ -219,8 +219,8 @@ export function renderTenants(container) {
         '</div></div>' +
         (p.total > 0 ? '<div class="px-5 py-4 border-t border-binos-border bg-white flex items-center justify-between text-sm">' +
         '<span class="text-binos-gray">Showing ' + ((state.page - 1) * state.pageSize + 1) + '-' + Math.min(state.page * state.pageSize, p.total) + ' of ' + p.total + '</span>' +
-        '<div class="flex gap-2"><button class="btn-secondary btn-sm" ' + (!p.hasPrev ? 'disabled' : '') + ' onclick="(e => { if (state.page > 1) { state.page--; rerender(); } })(event)">Previous</button>' +
-        '<button class="btn-secondary btn-sm" ' + (!p.hasNext ? 'disabled' : '') + ' onclick="(e => { if (state.page * state.pageSize < p.total) { state.page++; rerender(); } })(event)">Next</button></div></div>' : '');
+        '<div class="flex gap-2"><button class="btn-secondary btn-sm" data-page-prev ' + (!p.hasPrev ? 'disabled' : '') + '>Previous</button>' +
+        '<button class="btn-secondary btn-sm" data-page-next ' + (!p.hasNext ? 'disabled' : '') + '>Next</button></div></div>' : '');
     }
 
     html += renderFormModal() + renderInspectModal() + '</div>';
@@ -230,26 +230,35 @@ export function renderTenants(container) {
 
   function renderFormModal() {
     if (!state.showForm) return '';
-    return '<div class="modal-overlay" data-close-form><div class="modal-content max-w-lg" onclick="event.stopPropagation()">' +
+    return '<div class="modal-overlay" data-close-form><div class="modal-content max-w-lg" data-stop-propagation>' +
       '<div class="card-header flex items-center justify-between"><h3 class="font-display font-semibold">' + (state.editingId ? 'Edit Tenant' : 'Add Tenant') + '</h3>' +
       '<button class="p-1.5 rounded-lg hover:bg-binos-light" data-close-form><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' +
       '<div class="card-body"><div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
-      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Name *</label><input type="text" class="input-field" value="' + escHtml(state.form.name) + '" onchange="(e => { state.form.name = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Phone</label><input type="tel" class="input-field" value="' + escHtml(state.form.phone) + '" onchange="(e => { state.form.phone = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Email</label><input type="email" class="input-field" value="' + escHtml(state.form.email) + '" onchange="(e => { state.form.email = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease Start</label><input type="date" class="input-field" value="' + state.form.lease_start + '" onchange="(e => { state.form.lease_start = e.target.value; rerender(); })(event)"></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease End</label><input type="date" class="input-field" value="' + state.form.lease_end + '" onchange="(e => { state.form.lease_end = e.target.value; rerender(); })(event)"></div>' +
+      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Name *</label><input type="text" class="input-field" data-form-name value="' + escHtml(state.form.name) + '"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Phone</label><input type="tel" class="input-field" data-form-phone value="' + escHtml(state.form.phone) + '"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Email</label><input type="email" class="input-field" data-form-email value="' + escHtml(state.form.email) + '"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease Start</label><input type="date" class="input-field" data-form-lease_start value="' + state.form.lease_start + '"></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease End</label><input type="date" class="input-field" data-form-lease_end value="' + state.form.lease_end + '"></div>' +
       '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Property</label>' +
-      '<select class="select-field" onchange="(e => { state.form.property_id = e.target.value || null; rerender(); })(event)">' +
+      '<select class="select-field" data-form-property_id>' +
       '<option value="">Select property</option>' +
       state.properties.map(p => '<option value="' + p.id + '" ' + (state.form.property_id == p.id ? 'selected' : '') + '>' + escHtml(p.scheme_name) + '</option>').join('') + '</select></div>' +
-      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease File URL</label><input type="url" class="input-field" placeholder="Link to lease doc in property-files" value="' + escHtml(state.form.lease_file) + '" onchange="(e => { state.form.lease_file = e.target.value; rerender(); })(event)"></div>' +
-      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Notes</label><textarea class="input-field min-h-[80px]" onchange="(e => { state.form.notes = e.target.value; rerender(); })(event)">' + escHtml(state.form.notes) + '</textarea></div>' +
+      '<div><label class="block text-sm font-medium text-binos-gray mb-1.5">Lease File URL</label><input type="url" class="input-field" placeholder="Link to lease doc in property-files" data-form-lease_file value="' + escHtml(state.form.lease_file) + '"></div>' +
+      '<div class="md:col-span-2"><label class="block text-sm font-medium text-binos-gray mb-1.5">Notes</label><textarea class="input-field min-h-[80px]" data-form-notes>' + escHtml(state.form.notes) + '</textarea></div>' +
       '</div><div class="flex gap-3 pt-6"><button class="btn-secondary flex-1" data-close-form>Cancel</button>' +
       '<button class="btn-primary flex-1" data-save-tenant ' + (!state.form.name ? 'disabled' : '') + '>Save</button></div></div></div></div>';
   }
 
   function attachEvents() {
+    container.querySelectorAll('[data-filter-prop]').forEach(el => {
+      el.onchange = () => { state.filterProp = el.value; state.page = 1; rerender(); };
+    });
+    container.querySelectorAll('[data-page-prev]').forEach(el => {
+      el.onclick = () => { if (state.page > 1) { state.page--; rerender(); } };
+    });
+    container.querySelectorAll('[data-page-next]').forEach(el => {
+      el.onclick = () => { if (getPaginated().hasNext) { state.page++; rerender(); } };
+    });
     container.querySelectorAll('[data-close-inspect]').forEach(el => {
       el.onclick = () => { state.inspectModal = null; rerender(); };
     });
@@ -304,6 +313,33 @@ export function renderTenants(container) {
           });
         } catch {}
       };
+    });
+    container.querySelectorAll('[data-form-name]').forEach(el => {
+      el.onchange = () => { state.form.name = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-phone]').forEach(el => {
+      el.onchange = () => { state.form.phone = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-email]').forEach(el => {
+      el.onchange = () => { state.form.email = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-lease_start]').forEach(el => {
+      el.onchange = () => { state.form.lease_start = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-lease_end]').forEach(el => {
+      el.onchange = () => { state.form.lease_end = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-property_id]').forEach(el => {
+      el.onchange = () => { state.form.property_id = el.value || null; rerender(); };
+    });
+    container.querySelectorAll('[data-form-lease_file]').forEach(el => {
+      el.onchange = () => { state.form.lease_file = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-form-notes]').forEach(el => {
+      el.onchange = () => { state.form.notes = el.value; rerender(); };
+    });
+    container.querySelectorAll('[data-stop-propagation]').forEach(el => {
+      el.onclick = (e) => e.stopPropagation();
     });
   }
 

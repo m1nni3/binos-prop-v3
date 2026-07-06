@@ -1,0 +1,1 @@
+import{w as s}from"./CTiPcEFm.js";const r=s([]);let d=0;function c(a,n,e=4e3){const t=`n-${++d}`;r.update(o=>[...o,{id:t,message:n,type:a,duration:e}]),setTimeout(()=>{r.update(o=>o.filter(i=>i.id!==t))},e)}function u(a){return new Promise((n,e)=>{const t=new FileReader;t.onload=()=>n(t.result),t.onerror=e,t.readAsDataURL(a)})}export{r as n,u as r,c as t};
