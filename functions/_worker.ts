@@ -96,152 +96,27 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
 }
 
 async function initSchema(env: Env) {
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS properties (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    scheme_name TEXT NOT NULL,
-    scheme TEXT NOT NULL DEFAULT '',
-    address TEXT NOT NULL DEFAULT '',
-    status TEXT NOT NULL DEFAULT 'Active',
-    type TEXT NOT NULL DEFAULT 'Residential',
-    purchase_price REAL NOT NULL DEFAULT 0,
-    purchase_date TEXT,
-    value REAL NOT NULL DEFAULT 0,
-    rental_income REAL NOT NULL DEFAULT 0,
-    expenses REAL NOT NULL DEFAULT 0,
-    profit_margin REAL NOT NULL DEFAULT 0,
-    size REAL NOT NULL DEFAULT 0,
-    beds INTEGER NOT NULL DEFAULT 0,
-    baths INTEGER NOT NULL DEFAULT 0,
-    last_maintenance_date TEXT,
-    next_maintenance_due TEXT,
-    maintenance_budget REAL NOT NULL DEFAULT 0,
-    image TEXT,
-    active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS properties (id INTEGER PRIMARY KEY AUTOINCREMENT, scheme_name TEXT NOT NULL, scheme TEXT NOT NULL DEFAULT '', address TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'Active', type TEXT NOT NULL DEFAULT 'Residential', purchase_price REAL NOT NULL DEFAULT 0, purchase_date TEXT, value REAL NOT NULL DEFAULT 0, rental_income REAL NOT NULL DEFAULT 0, expenses REAL NOT NULL DEFAULT 0, profit_margin REAL NOT NULL DEFAULT 0, size REAL NOT NULL DEFAULT 0, beds INTEGER NOT NULL DEFAULT 0, baths INTEGER NOT NULL DEFAULT 0, last_maintenance_date TEXT, next_maintenance_due TEXT, maintenance_budget REAL NOT NULL DEFAULT 0, image TEXT, active INTEGER NOT NULL DEFAULT 1, created_at TEXT DEFAULT (datetime('now')), updated_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS contacts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    role TEXT,
-    company TEXT,
-    office TEXT,
-    phone TEXT,
-    office_number TEXT,
-    email TEXT,
-    address TEXT,
-    website TEXT,
-    category TEXT,
-    notes TEXT,
-    property_id INTEGER,
-    active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, role TEXT, company TEXT, office TEXT, phone TEXT, office_number TEXT, email TEXT, address TEXT, website TEXT, category TEXT, notes TEXT, property_id INTEGER, active INTEGER NOT NULL DEFAULT 1, created_at TEXT DEFAULT (datetime('now')), updated_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    property_id TEXT NOT NULL DEFAULT 'all',
-    category TEXT NOT NULL,
-    amount REAL NOT NULL DEFAULT 0,
-    last_updated TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl (id INTEGER PRIMARY KEY AUTOINCREMENT, property_id TEXT NOT NULL DEFAULT 'all', category TEXT NOT NULL, amount REAL NOT NULL DEFAULT 0, last_updated TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl_monthly (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    property_id TEXT NOT NULL DEFAULT 'all',
-    category TEXT NOT NULL,
-    month TEXT NOT NULL,
-    year INTEGER NOT NULL,
-    income REAL NOT NULL DEFAULT 0,
-    expenses REAL NOT NULL DEFAULT 0,
-    amount REAL NOT NULL DEFAULT 0,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl_monthly (id INTEGER PRIMARY KEY AUTOINCREMENT, property_id TEXT NOT NULL DEFAULT 'all', category TEXT NOT NULL, month TEXT NOT NULL, year INTEGER NOT NULL, income REAL NOT NULL DEFAULT 0, expenses REAL NOT NULL DEFAULT 0, amount REAL NOT NULL DEFAULT 0, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl_entries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date TEXT NOT NULL,
-    category TEXT NOT NULL,
-    description TEXT,
-    amount REAL NOT NULL DEFAULT 0,
-    property_id TEXT,
-    deducted_expenses INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS pl_entries (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, category TEXT NOT NULL, description TEXT, amount REAL NOT NULL DEFAULT 0, property_id TEXT, deducted_expenses INTEGER NOT NULL DEFAULT 0, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS maintenance (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    category TEXT NOT NULL DEFAULT 'general',
-    property_id TEXT,
-    date TEXT,
-    location TEXT,
-    description TEXT,
-    technician TEXT,
-    cost REAL NOT NULL DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'pending',
-    priority TEXT NOT NULL DEFAULT 'medium',
-    active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS maintenance (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, category TEXT NOT NULL DEFAULT 'general', property_id TEXT, date TEXT, location TEXT, description TEXT, technician TEXT, cost REAL NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'pending', priority TEXT NOT NULL DEFAULT 'medium', active INTEGER NOT NULL DEFAULT 1, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT,
-    status TEXT NOT NULL DEFAULT 'pending',
-    priority TEXT NOT NULL DEFAULT 'medium',
-    due_date TEXT,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, description TEXT, status TEXT NOT NULL DEFAULT 'pending', priority TEXT NOT NULL DEFAULT 'medium', due_date TEXT, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS tenants (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    phone TEXT,
-    email TEXT,
-    property_id TEXT,
-    lease_start TEXT,
-    lease_end TEXT,
-    lease_file TEXT,
-    notes TEXT,
-    active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS tenants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, phone TEXT, email TEXT, property_id TEXT, lease_start TEXT, lease_end TEXT, lease_file TEXT, notes TEXT, active INTEGER NOT NULL DEFAULT 1, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS activity (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    action TEXT NOT NULL,
-    entity_type TEXT,
-    entity_label TEXT,
-    actor TEXT,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS activity (id INTEGER PRIMARY KEY AUTOINCREMENT, action TEXT NOT NULL, entity_type TEXT, entity_label TEXT, actor TEXT, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.DB.exec(`CREATE TABLE IF NOT EXISTS petty_cash (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL,
-    amount REAL NOT NULL DEFAULT 0,
-    description TEXT,
-    property_id TEXT,
-    date TEXT,
-    category TEXT,
-    active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.DB.exec(`CREATE TABLE IF NOT EXISTS petty_cash (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL, amount REAL NOT NULL DEFAULT 0, description TEXT, property_id TEXT, date TEXT, category TEXT, active INTEGER NOT NULL DEFAULT 1, created_at TEXT DEFAULT (datetime('now')))`);
 
-  await env.PORTALS_DB.exec(`CREATE TABLE IF NOT EXISTS portals (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    type TEXT NOT NULL,
-    name TEXT NOT NULL,
-    username TEXT NOT NULL,
-    password_enc TEXT NOT NULL DEFAULT '',
-    url TEXT NOT NULL DEFAULT '',
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now'))
-  )`);
+  await env.PORTALS_DB.exec(`CREATE TABLE IF NOT EXISTS portals (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL, name TEXT NOT NULL, username TEXT NOT NULL, password_enc TEXT NOT NULL DEFAULT '', url TEXT NOT NULL DEFAULT '', created_at TEXT DEFAULT (datetime('now')), updated_at TEXT DEFAULT (datetime('now')))`);
 }
 
 function json(data: any, status = 200) {
